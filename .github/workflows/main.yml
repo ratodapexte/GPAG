@@ -6,12 +6,13 @@ Funcionalidades:
      Login;
      Remover clientes e funcionários;
      Adicionar clientes e funcionários;
-     Cadastro de contas;
+     Cadastro de contas.
  - Funcionário:
      Login;
      Remover clientes;
      Adicionar clientes;
-     Cadastro de contas;
+     Cadastro de contas.
  - Cliente:
      Login;
      Visualizar pagamento das próprias contas;
+     Entrar código de autenticação de pagamento.
