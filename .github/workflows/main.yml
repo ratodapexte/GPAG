@@ -1,0 +1,17 @@
+Usuários:
+	Administrador, funcionário e cliente.
+
+Funcionalidades:
+ - Administrador:
+     Login;
+     Remover clientes e funcionários;
+     Adicionar clientes e funcionários;
+     Cadastro de contas;
+ - Funcionário:
+     Login;
+     Remover clientes;
+     Adicionar clientes;
+     Cadastro de contas;
+ - Cliente:
+     Login;
+     Visualizar pagamento das próprias contas;
