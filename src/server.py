@@ -15,5 +15,6 @@ while msg != 'sair':
     while msg != 'sair':
         msg = client.recv(1024).decode() #recebe mensagem do cliente e transforma de byte-type pra str (decode)
         print(adress,": ", msg)
+        client.send("funcionando".encode())
     print("Conexao com ", adress, " finalizada.")
 print("Servidor finalizado")
