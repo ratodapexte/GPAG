@@ -15,5 +15,7 @@ print(msg)
 while msg != 'sair':
     msg = input()
     tcp.send(msg.encode()) #envia mensagem para o servidor em byte-type (encode)
+    teste = tcp.recv(1024).decode()
+    print(teste)
 
 tcp.close() #encerra o cliente
