@@ -1,18 +1,35 @@
 import socket
+# import models
 
-HOST = '127.0.0.1'
-PORT = 30000
+class Connection:
+    def __init__(self, host, port):
+        self.HOST = host
+        self.PORT = port
+        self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.dest = (self.HOST, self.PORT)
 
-tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def connect(self):
+        self.tcp.connect(self.dest)
 
-dest = (HOST,  PORT)
+    def send(self, msg):
+        self.tcp.send(msg)
 
-tcp.connect(dest)
+    def close(self):
+        self.tcp.close()
 
-msg = input('Digite sua mensagem: ').encode()
 
-while msg.decode('utf-8') != 'exit':
-    tcp.send(msg)
+
+def connect_to_server():
+    connection1 = Connection('127.0.0.1', 30000) 
+ 
+    connection1.connect()
+
     msg = input('Digite sua mensagem: ').encode()
 
-tcp.close()
+    while msg.decode('utf-8') != 'exit':
+        connection1.send(msg)
+        msg = input('Digite sua mensagem: ').encode()
+
+def close_socket(connection):
+    connection.close()
+        
