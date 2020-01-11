@@ -1,6 +1,10 @@
 import socket
 import json
 
+class User():
+    def __init__(self, username, auth_key):
+        self.username = username
+        self.auth_key = auth_key
 
 # a Python object (dict):
 x = {
@@ -15,14 +19,16 @@ def login_user(tcp):
     password = input("Digite a senha do usuário: ")
 
     sended_json = json.dumps({'command': 'login_user', 'username': username, 'password': password})
-    tcp.send(sended_json.encode()) 
-    print(tcp.recv(1024).decode())
+    tcp.send(sended_json.encode())
+
+    recieved_json =  json.loads(tcp.recv(1024).decode())
+
+    if recieved_json is None:
+        return None
+    else:
+        return User(recieved_json['username'], recieved_json['auth_key'])
     # recv_json = tcp.recv(1024).decode()
 
-# class User():
-#     def __init__(username, authentication_key):
-#         self.username = username
-#         self.authentication_key = authentication_key
 
 
 # convert into JSON:
@@ -45,5 +51,6 @@ while msg != 'sair':
     # msg = input("Digite sua mensagem: ")
     # teste = tcp.recv(1024).decode()
     # print(teste)
-    login_user(tcp)
+    auth_user = login_user(tcp)
+    print(auth_user)
 tcp.close() #encerra o cliente

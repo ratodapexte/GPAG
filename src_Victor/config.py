@@ -1,12 +1,11 @@
 from configparser import ConfigParser
  
  
-def config(filename='database.ini', section='postgresql'):
+def config(filename='/Users/victo/Documents/Redes/database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
-    parser.read('database.ini')
-    print('nome: ',parser.sections())
+    parser.read(filename)
  
     # get section, default to postgresql
     db = {}
@@ -19,7 +18,3 @@ def config(filename='database.ini', section='postgresql'):
  
     return db
 
-
-
-
-config()

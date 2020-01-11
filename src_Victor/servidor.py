@@ -5,13 +5,18 @@ from reused_code import *
 
 def login_user(dict):
     print("Dados recebidos: ", dict)
-    querry = querry_one("""SELECT login FROM users WHERE login = %s AND password = %s""",
+    querry = querry_one("""SELECT username FROM users WHERE username = %s AND password = %s""",
             dict['username'], dict['password'])
     if querry is None:
-        return "Nada encontrado!".encode()
+        return None
     else:
-        result = "Usuário encontrado: " + querry + secrets.token_hex() 
-        return result.encode() 
+        
+        auth_key = secrets.token_hex()
+        result = {'username': querry[0], 'auth_key': auth_key}
+        commit_querry("""UPDATE users SET auth_key = %s WHERE username = %s AND password = %s""",
+        auth_key, result['username'], dict['password'])
+
+        return json.dumps(result).encode() 
 
 HOST = ''
 PORT = 30000
