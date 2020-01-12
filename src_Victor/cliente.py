@@ -29,7 +29,11 @@ def login_user(tcp):
         return User(recieved_json['username'], recieved_json['auth_key'])
     # recv_json = tcp.recv(1024).decode()
 
-
+def sign_up(tcp):
+    print("##### CCADASTRO DE USUÁRIO #####")
+    username = input("Digite o nome de usuário: ")
+    password = input("Digite a senha do usuário: ")
+     
 
 # convert into JSON:
 y = json.dumps(x)
@@ -45,12 +49,14 @@ print("Conectado ao servidor ", host)
 print("Para sair digite 'sair'")
 msg = 'none'
 print(msg)
+auth_user = None
 
 while msg != 'sair':
-    print("Escolha as opções a seguir: \n1 - login: ")
-    # msg = input("Digite sua mensagem: ")
-    # teste = tcp.recv(1024).decode()
-    # print(teste)
-    auth_user = login_user(tcp)
-    print(auth_user)
+    if auth_user is None:
+        choice = ("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.") 
+        if choice == 1:
+            auth_user = login_user(tcp)
+            print(auth_user.username)
+        if choice == 2:
+
 tcp.close() #encerra o cliente
