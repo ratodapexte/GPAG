@@ -13,6 +13,8 @@ x = {
   "city": "New York"
 }
 
+
+
 def login_user(tcp):
     print("##### LOGIN DE USUÁRIO #####")
     username = input("Digite o nome de usuário: ")
@@ -36,7 +38,7 @@ def sign_up(tcp):
     name = input("Digite o nome: ")
     cpf = input("Digite o cpf: ")
     email = input("Digite o seu email: ")
-    phone = input("Digite o seu telefone: ")
+    phone = input("Digite o seu telefone: ")    
 
     sended_json = json.dumps({'command': 'sign_up', 'username': username, 'password': password,
                                 'name': name, 'cpf': cpf, 'email': email, 'phone': phone})
@@ -79,5 +81,11 @@ while msg != 'sair':
             auth_user = login_user(tcp)
             print(auth_user.username)
         if choice == 2:
+<<<<<<< HEAD
             print(sign_up(tcp))
+=======
+    else:
+        auth_user = authenticate_user(tcp, auth_user)
+        
+>>>>>>> 8c5d58417b8482d86f16fe715b5d64187cc3bcce
 tcp.close() #encerra o cliente

@@ -10,7 +10,6 @@ def login_user(dict):
     if querry is None:
         return None
     else:
-        
         auth_key = secrets.token_hex()
         result = {'username': querry[0], 'auth_key': auth_key}
         commit_querry("""UPDATE users SET auth_key = %s WHERE username = %s AND password = %s""",
