@@ -10,13 +10,27 @@ def login_user(dict):
     if querry is None:
         return None
     else:
-        
         auth_key = secrets.token_hex()
         result = {'username': querry[0], 'auth_key': auth_key}
         commit_querry("""UPDATE users SET auth_key = %s WHERE username = %s AND password = %s""",
         auth_key, result['username'], dict['password'])
 
         return json.dumps(result).encode() 
+
+
+def authenticate_user(dict):
+    print("Dados recebidos: ", dict)
+    querry = querry_one("""SELECT username FROM users WHERE username = %s AND auth_key = %s""",
+            dict['username'], dict['auth_key'])
+    
+    if querry is None:
+        return 'false'.encode()
+    else:
+        return 'true'.encode()
+
+
+
+
 
 HOST = ''
 PORT = 30000
