@@ -1,7 +1,7 @@
 from configparser import ConfigParser
  
  
-def config(filename='/Users/victo/Documents/Redes/database.ini', section='postgresql'):
+def config(filename='GPAG\src_Victor\database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
@@ -18,3 +18,4 @@ def config(filename='/Users/victo/Documents/Redes/database.ini', section='postgr
  
     return db
 
+config()

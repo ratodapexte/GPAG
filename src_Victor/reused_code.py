@@ -18,19 +18,21 @@ def commit_querry(sql, *args):
    # execute a statement
         print('Running querry:')
         cur.execute(sql, args)
+        status = cur.statusmessage
         conn.commit()
         # display the last Querry status    
         print("Querry status: ", cur.statusmessage)
-       
        # close the communication with the PostgreSQL
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
+        return None
     finally:
         if conn is not None:
             conn.close()
             print('Database connection closed.')
-
+            return status.encode()
+        return None
 
 def querry_one(sql, *args):
     conn = None
@@ -40,6 +42,7 @@ def querry_one(sql, *args):
 
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
+        print('Params: ',params)
         conn = psycopg2.connect(**params)
         
         # create a cursor

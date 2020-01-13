@@ -18,6 +18,14 @@ def login_user(dict):
 
         return json.dumps(result).encode() 
 
+
+def sign_up(dict):
+    print("Dados recebidos: ", dict)
+    status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone)
+                    VALUES (%s,%s,%s,%s,%s,%s)""", 
+                    dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'])
+    return status
+
 HOST = ''
 PORT = 30000
 

@@ -33,10 +33,18 @@ def sign_up(tcp):
     print("##### CCADASTRO DE USUÁRIO #####")
     username = input("Digite o nome de usuário: ")
     password = input("Digite a senha do usuário: ")
-     
+    name = input("Digite o nome: ")
+    cpf = input("Digite o cpf: ")
+    email = input("Digite o seu email: ")
+    phone = input("Digite o seu telefone: ")
 
-# convert into JSON:
-y = json.dumps(x)
+    sended_json = json.dumps({'command': 'sign_up', 'username': username, 'password': password,
+                                'name': name, 'cpf': cpf, 'email': email, 'phone': phone})
+    tcp.send(sended_json.encode())
+    return tcp.recv(1024).decode()
+
+
+######################################################################################################
 
 host = '127.0.0.1'  #ip do servidor
 port = 30000        #porta que o servidor vai usar pra trocar informações
@@ -53,10 +61,10 @@ auth_user = None
 
 while msg != 'sair':
     if auth_user is None:
-        choice = ("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.") 
+        choice = int(input("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.")) 
         if choice == 1:
             auth_user = login_user(tcp)
             print(auth_user.username)
         if choice == 2:
-
+            print(sign_up(tcp))
 tcp.close() #encerra o cliente
