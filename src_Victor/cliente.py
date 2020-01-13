@@ -25,7 +25,7 @@ def login_user(tcp):
 
     recieved_json =  json.loads(tcp.recv(1024).decode())
 
-    if recieved_json is None:
+    if recieved_json['username'] is 'None':
         return None
     else:
         return User(recieved_json['username'], recieved_json['auth_key'])
@@ -50,13 +50,12 @@ def authenticate_user(tcp, auth_user):
     sended_json = json.dumps({'command': 'authenticate_user', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
 
-    result = tcp.recv(10).decode()
+    result = tcp.recv(100).decode()
 
-    if result is 'true'
+    if result == 'true':
         return auth_user
     else:
-        return None
-                
+        return None                
 
 
 ######################################################################################################
@@ -81,11 +80,8 @@ while msg != 'sair':
             auth_user = login_user(tcp)
             print(auth_user.username)
         if choice == 2:
-<<<<<<< HEAD
             print(sign_up(tcp))
-=======
     else:
         auth_user = authenticate_user(tcp, auth_user)
         
->>>>>>> 8c5d58417b8482d86f16fe715b5d64187cc3bcce
 tcp.close() #encerra o cliente

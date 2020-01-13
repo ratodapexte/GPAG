@@ -1,9 +1,11 @@
 #SERVIDOR
 import psycopg2
+import json
 from config import config
 
 def commit_querry(sql, *args):
     conn = None
+    status = None
     try:
         # read connection parameters
         params = config()
@@ -136,35 +138,3 @@ def querry_all(sql, *args):
             return rows
         return None
         
-
-def authenticate_user(tcp, login, auth_key):
-    tcp.send(json.dumps({'command': 'authenticate_user', 'login': login, 'auth_key': auth_key}).encode())
-    result = tcp.recv(1024).decode()
-    if result = 'true':
-        return True
-    else:
-        return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

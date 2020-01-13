@@ -1,6 +1,7 @@
 import socket
 import secrets
 import json
+from datetime import datetime
 from reused_code import *
 
 def login_user(dict):
@@ -8,12 +9,14 @@ def login_user(dict):
     querry = querry_one("""SELECT username FROM users WHERE username = %s AND password = %s""",
             dict['username'], dict['password'])
     if querry is None:
-        return None
+        return json.dumps({'username': 'None', 'auth_key': 'None'}).encode()
     else:
         auth_key = secrets.token_hex()
+        auth_key_init_datetime = datetime.now()
         result = {'username': querry[0], 'auth_key': auth_key}
-        commit_querry("""UPDATE users SET auth_key = %s WHERE username = %s AND password = %s""",
-        auth_key, result['username'], dict['password'])
+        commit_querry("""UPDATE users SET auth_key = %s, auth_key_init_datetime = %s 
+                        WHERE username = %s AND password = %s""",
+        auth_key, auth_key_init_datetime, result['username'], dict['password'])
 
         return json.dumps(result).encode() 
 
@@ -27,14 +30,20 @@ def sign_up(dict):
 
 
 def authenticate_user(dict):
+    print("##### AUTENTICANDO USUARIO #####")
     print("Dados recebidos: ", dict)
-    querry = querry_one("""SELECT username FROM users WHERE username = %s AND auth_key = %s""",
+    querry = querry_one("""SELECT auth_key_init_datetime FROM users WHERE username = %s AND auth_key = %s""",
             dict['username'], dict['auth_key'])
-    
-    if querry is None:
-        return 'false'.encode()
-    else:
+
+    time_dif = datetime.now() - querry[0]
+    print(time_dif.seconds)
+
+    if time_dif.seconds < 10:
         return 'true'.encode()
+    else:
+        commit_querry("""UPDATE users SET auth_key = null, auth_key_init_datetime = null 
+                        WHERE username = %s""", dict['username'])
+        return 'false'.encode()
 
 
 HOST = ''
@@ -58,3 +67,10 @@ while True:
     print ('Finalizando conexao do cliente ', cliente)
     con.close()
     
+##############################################################################
+'''                              AUTENTICACAO
+    RECEBE CHAVE E USUÁRIO
+    BUSCA O TEMPO EM QUE A CHAVE DO USUÁRIO FOI AUTENTICADO PELA ULTIMA VEZ
+    CASO A DIFERENÇA SEJA MAIOR QUE X O BANCO VAI APAGAR A SUA CHAVE DE AUTENTICACAO
+'''
+##############################################################################
