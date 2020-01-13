@@ -26,6 +26,18 @@ def sign_up(dict):
                     dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'])
     return status
 
+
+def authenticate_user(dict):
+    print("Dados recebidos: ", dict)
+    querry = querry_one("""SELECT username FROM users WHERE username = %s AND auth_key = %s""",
+            dict['username'], dict['auth_key'])
+    
+    if querry is None:
+        return 'false'.encode()
+    else:
+        return 'true'.encode()
+
+
 HOST = ''
 PORT = 30000
 

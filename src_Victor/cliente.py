@@ -43,6 +43,19 @@ def sign_up(tcp):
     tcp.send(sended_json.encode())
     return tcp.recv(1024).decode()
 
+def authenticate_user(tcp, auth_user):
+
+    sended_json = json.dumps({'command': 'authenticate_user', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    tcp.send(sended_json.encode())
+
+    result = tcp.recv(10).decode()
+
+    if result is 'true'
+        return auth_user
+    else:
+        return None
+                
+
 
 ######################################################################################################
 
