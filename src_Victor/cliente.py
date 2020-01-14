@@ -58,6 +58,15 @@ def authenticate_user(tcp, auth_user):
         return None                
 
 
+def list_bills(tcp, auth_user):
+
+    sended_json = json.dumps({'command': 'list_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    tcp.send(sended_json.encode())
+
+    list_of_bills = tcp.recv(1024).decode()
+
+    
+
 ######################################################################################################
 
 host = '127.0.0.1'  #ip do servidor
@@ -82,6 +91,6 @@ while msg != 'sair':
         if choice == 2:
             print(sign_up(tcp))
     else:
-        auth_user = authenticate_user(tcp, auth_user)
+        print("Usuário logado")
         
 tcp.close() #encerra o cliente

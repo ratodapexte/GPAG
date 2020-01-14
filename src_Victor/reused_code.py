@@ -106,6 +106,7 @@ def querry_many(sql, size, *args):
 
 def querry_all(sql, *args):
     conn = None
+    rows = None
     try:
         # read connection parameters
         params = config()

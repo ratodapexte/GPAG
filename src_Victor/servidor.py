@@ -39,12 +39,21 @@ def authenticate_user(dict):
     print(time_dif.seconds)
 
     if time_dif.seconds < 10:
-        return 'true'.encode()
+        return True
     else:
         commit_querry("""UPDATE users SET auth_key = null, auth_key_init_datetime = null 
                         WHERE username = %s""", dict['username'])
-        return 'false'.encode()
+        return False
 
+def list_bills(dict):
+    # authenticate_user = authenticate_user(dict).decode()
+    # if authenticate_user == 'true'
+
+    # else:
+    user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
+    querry = querry_all("""SELECT * FROM bills b WHERE b.fk_user_id = %s""", user_id[0])
+
+    
 
 HOST = ''
 PORT = 30000
