@@ -26,7 +26,7 @@ def sign_up(dict):
     status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone)
                     VALUES (%s,%s,%s,%s,%s,%s)""", 
                     dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'])
-    return status
+    return status.encode()
 
 
 def authenticate_user(dict):
@@ -51,9 +51,11 @@ def list_bills(dict):
 
     # else:
     user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
-    querry = querry_all("""SELECT * FROM bills b WHERE b.fk_user_id = %s""", user_id[0])
+    list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s""",
+                                3);
+    print(list_of_bills)
 
-    
+
 
 HOST = ''
 PORT = 30000
