@@ -151,3 +151,7 @@ def authenticate_user(username, auth_key):
         commit_querry("""UPDATE users SET auth_key = null, auth_key_init_datetime = null 
                         WHERE username = %s""", username)
         return False
+
+
+
+
