@@ -69,7 +69,7 @@ def authenticate_user(tcp, auth_user):
 
 ######################################################################################################
 
-host = '127.0.0.1'  #ip do servidor
+host = '83.136.219.66'  #ip do servidor
 port = 30000        #porta que o servidor vai usar pra trocar informações
 
 tcp = socket.socket(socket.AF_INET,socket.SOCK_STREAM) #AF_INET é usar a internet, SOCK_STREAM é TCP
@@ -84,7 +84,7 @@ auth_user = None
 
 while msg != 'sair':
     if auth_user is None:
-        choice = int(input("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.")) 
+        choice = int(input("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.\n")) 
         if choice == 1:
             auth_user = login_user(tcp)
             if auth_user is not None:
