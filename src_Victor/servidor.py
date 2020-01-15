@@ -1,7 +1,6 @@
 import socket
 import secrets
 import json
-from datetime import datetime
 from reused_code import *
 
 def login_user(dict):
@@ -29,31 +28,17 @@ def sign_up(dict):
     return status.encode()
 
 
-def authenticate_user(dict):
-    print("##### AUTENTICANDO USUARIO #####")
-    print("Dados recebidos: ", dict)
-    querry = querry_one("""SELECT auth_key_init_datetime FROM users WHERE username = %s AND auth_key = %s""",
-            dict['username'], dict['auth_key'])
-
-    time_dif = datetime.now() - querry[0]
-    print(time_dif.seconds)
-
-    if time_dif.seconds < 10:
-        return True
-    else:
-        commit_querry("""UPDATE users SET auth_key = null, auth_key_init_datetime = null 
-                        WHERE username = %s""", dict['username'])
-        return False
-
 def list_bills(dict):
     # authenticate_user = authenticate_user(dict).decode()
     # if authenticate_user == 'true'
 
     # else:
-    user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
-    list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s""",
-                                3)
-    print(list_of_bills)
+    if authenticate_user(dict['username'], dict['auth_key']) is True:
+        user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
+        list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s""",
+                                    3)
+        print(list_of_bills)
+    # else:
 
 
 

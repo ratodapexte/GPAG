@@ -58,12 +58,12 @@ def authenticate_user(tcp, auth_user):
         return None                
 
 
-def list_bills(tcp, auth_user):
+# def list_bills(tcp, auth_user):
 
-    sended_json = json.dumps({'command': 'list_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
-    tcp.send(sended_json.encode())
+#     sended_json = json.dumps({'command': 'list_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+#     tcp.send(sended_json.encode())
 
-    list_of_bills = tcp.recv(1024).decode()
+#     list_of_bills = tcp.recv(1024).decode()
 
     
 
@@ -95,5 +95,7 @@ while msg != 'sair':
             print(sign_up(tcp))
     else:
         print("Usuário logado")
+        print("Nome: ", auth_user.username)
+        auth_user = None
         
 tcp.close() #encerra o cliente

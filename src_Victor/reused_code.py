@@ -2,6 +2,7 @@
 import psycopg2
 import json
 from config import config
+from datetime import datetime
 
 def commit_querry(sql, *args):
     conn = None
@@ -32,7 +33,7 @@ def commit_querry(sql, *args):
         if conn is not None:
             conn.close()
             print('Database connection closed.')
-    return status.encode()
+    return status
 
 def querry_one(sql, *args):
     conn = None
@@ -135,3 +136,18 @@ def querry_all(sql, *args):
     return rows
 
         
+def authenticate_user(username, auth_key):
+    print("##### AUTENTICANDO USUARIO #####")
+    print("Dados recebidos: ", username, auth_key)
+    querry = querry_one("""SELECT auth_key_init_datetime FROM users WHERE username = %s AND auth_key = %s""",
+            username, auth_key)
+
+    time_dif = datetime.now() - querry[0]
+    print(time_dif.seconds)
+
+    if time_dif.seconds < 10:
+        return True
+    else:
+        commit_querry("""UPDATE users SET auth_key = null, auth_key_init_datetime = null 
+                        WHERE username = %s""", username)
+        return False
