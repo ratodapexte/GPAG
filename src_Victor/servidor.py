@@ -52,7 +52,7 @@ def list_bills(dict):
     # else:
     user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
     list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s""",
-                                3);
+                                3)
     print(list_of_bills)
 
 

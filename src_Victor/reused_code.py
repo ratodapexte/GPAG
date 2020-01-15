@@ -66,7 +66,7 @@ def querry_one(sql, *args):
         if conn is not None:
             conn.close()
             print('Database connection closed.')
-            return row
+    return row
 
 def querry_many(sql, size, *args):
     conn = None
@@ -96,11 +96,9 @@ def querry_many(sql, size, *args):
         return None
     finally:
         if conn is not None:
-            if rows is None:
-                return None
-            else:
-                return rows
-        return None
+            conn.close()
+            print('Database connection closed.')
+    return rows
 
 def querry_all(sql, *args):
     conn = None
@@ -134,6 +132,6 @@ def querry_all(sql, *args):
         if conn is not None:
             conn.close()
             print('Database connection closed.')
-            return rows
-        return None
+    return rows
+
         
