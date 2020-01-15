@@ -20,7 +20,7 @@ CREATE TABLE users (
   auth_key text UNIQUE,
   fk_address_id int NOT NULL REFERENCES address(id)
 );
-CREATE TABLE Bills (
+CREATE TABLE bills (
   id bigserial PRIMARY KEY,
   payment NUMERIC NOT NULL,
   registration_date date DEFAULT cast(now() as date),
