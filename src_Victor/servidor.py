@@ -39,6 +39,17 @@ def list_bills(dict):
                                     3)
         print(list_of_bills)
     # else:
+    
+def add_bills(dict)
+{
+    print("Dados recebidos: ", dict)
+    user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
+    if user_id is None:
+        return 'Cliente nao cadastrado'.encode()
+    fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
+    status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
+    return status.encode()
+}
 
 
 

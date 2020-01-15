@@ -6,15 +6,6 @@ class User():
         self.username = username
         self.auth_key = auth_key
 
-# a Python object (dict):
-x = {
-  "name": "John",
-  "age": 30,
-  "city": "New York"
-}
-
-
-
 def login_user(tcp):
     print("##### LOGIN DE USUÁRIO #####")
     username = input("Digite o nome de usuário: ")
@@ -32,7 +23,7 @@ def login_user(tcp):
     # recv_json = tcp.recv(1024).decode()
 
 def sign_up(tcp):
-    print("##### CCADASTRO DE USUÁRIO #####")
+    print("##### CADASTRO DE USUÁRIO #####")
     username = input("Digite o nome de usuário: ")
     password = input("Digite a senha do usuário: ")
     name = input("Digite o nome: ")
@@ -46,7 +37,6 @@ def sign_up(tcp):
     return tcp.recv(1024).decode()
 
 def authenticate_user(tcp, auth_user):
-
     sended_json = json.dumps({'command': 'authenticate_user', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
 
@@ -55,7 +45,17 @@ def authenticate_user(tcp, auth_user):
     if result == 'true':
         return auth_user
     else:
-        return None                
+        return None
+
+def add_bills(tcp, auth_user)
+    print("##### CADASTRO DE CONTA #####")
+    payment = input("Digite o valor da conta: ")
+    due_date = input("Digite a data de vencimento: ")
+    cpf = input("Digite o CPF do cliente: ")
+    
+    sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date,'employee_username': auth_user.username, 'cpf': cpf})
+    tcp.send(sended_json.encode())
+    return tcp.recv(1024).decode()
 
 
 # def list_bills(tcp, auth_user):
