@@ -29,13 +29,27 @@ def sign_up(dict):
 
 
 def list_bills(dict):
-    # authenticate_user = authenticate_user(dict).decode()
-    # if authenticate_user == 'true'
-
-    # else:
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
         list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s""",
+                            user_id)
+
+        bills_dict = {'id': [], 'pagamento': [], 'cadastro': [], 'vencimento': []}
+        for bill in list_of_bills:
+            bills_dict['id'].append(str(bill[0]))
+            bills_dict['pagamento'].append(str(bill[1]))
+            bills_dict['cadastro'].append(str(bill[2]))
+            bills_dict['vencimento'].append(str(bill[3]))
+
+        return json.dumps(bills_dict).encode() 
+    else:
+        return "ERRO 401".encode()
+
+def list_unchecked_payments(dict):
+    if authenticate_user(dict['username'], dict['auth_key']) is True:
+        user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
+        list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b 
+                                        WHERE b.fk_user_id = %s and validated = 'f'""",
                             user_id)
 
         bills_dict = {'id': [], 'pagamento': [], 'cadastro': [], 'vencimento': []}
