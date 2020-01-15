@@ -87,7 +87,10 @@ while msg != 'sair':
         choice = int(input("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.")) 
         if choice == 1:
             auth_user = login_user(tcp)
-            print(auth_user.username)
+            if auth_user is not None:
+                print(auth_user.username)
+            else:
+                print('Erro!')
         if choice == 2:
             print(sign_up(tcp))
     else:

@@ -5,7 +5,6 @@ from config import config
 
 def commit_querry(sql, *args):
     conn = None
-    status = None
     try:
         # read connection parameters
         params = config()
@@ -28,13 +27,12 @@ def commit_querry(sql, *args):
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return None
+        return 'Erro!'
     finally:
         if conn is not None:
             conn.close()
             print('Database connection closed.')
-            return status.encode()
-        return None
+    return status.encode()
 
 def querry_one(sql, *args):
     conn = None
