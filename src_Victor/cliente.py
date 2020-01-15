@@ -16,7 +16,7 @@ def login_user(tcp):
 
     recieved_json =  json.loads(tcp.recv(1024).decode())
 
-    if recieved_json['username'] is 'None':
+    if recieved_json['username'] == 'None':
         return None
     else:
         return User(recieved_json['username'], recieved_json['auth_key'])
@@ -58,18 +58,47 @@ def add_bills(tcp, auth_user)
     return tcp.recv(1024).decode()
 
 
-# def list_bills(tcp, auth_user):
+def list_bills(tcp, auth_user):
 
-#     sended_json = json.dumps({'command': 'list_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
-#     tcp.send(sended_json.encode())
+    sended_json = json.dumps({'command': 'list_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    tcp.send(sended_json.encode())
 
-#     list_of_bills = tcp.recv(1024).decode()
+    list_of_bills = tcp.recv(1024).decode()
 
+    if list_of_bills == 'ERRO 401':
+        return None
+    else:
+        list_of_bills = json.loads(list_of_bills)
+
+        for i in range(len(list_of_bills['id'])):
+            print("Id: ", list_of_bills['id'][i])
+            print("Pagamento: ", list_of_bills['pagamento'][i])
+            print("Data de cadastro: ", list_of_bills['cadastro'][i])
+            print("Data de vencimento: ", list_of_bills['id'][i])
+        return auth_user
     
+def list_unchecked_payments(tcp, auth_user):
+
+    sended_json = json.dumps({'command': 'list_unchecked_payments', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    tcp.send(sended_json.encode())
+
+    list_of_bills = tcp.recv(1024).decode()
+
+    if list_of_bills == 'ERRO 401':
+        return None
+    else:
+        list_of_bills = json.loads(list_of_bills)
+
+        for i in range(len(list_of_bills['id'])):
+            print("Id: ", list_of_bills['id'][i])
+            print("Pagamento: ", list_of_bills['pagamento'][i])
+            print("Data de cadastro: ", list_of_bills['cadastro'][i])
+            print("Data de vencimento: ", list_of_bills['id'][i])
+        return auth_user
 
 ######################################################################################################
 
-host = '83.136.219.66'  #ip do servidor
+host = 'localhost'  #ip do servidor
 port = 30000        #porta que o servidor vai usar pra trocar informações
 
 tcp = socket.socket(socket.AF_INET,socket.SOCK_STREAM) #AF_INET é usar a internet, SOCK_STREAM é TCP
@@ -96,6 +125,12 @@ while msg != 'sair':
     else:
         print("Usuário logado")
         print("Nome: ", auth_user.username)
-        auth_user = None
+        choice = int(input("Escolha as opções a seguir: \n1 - Listar contas;\n2 - Listar contas abertas;"))
+        if choice == 1:
+            auth_user = list_bills(tcp, auth_user)
+        elif choice == 2:
+            auth_user = list_unchecked_payments(tcp, auth_user)
+
+
         
 tcp.close() #encerra o cliente

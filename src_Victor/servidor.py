@@ -29,19 +29,41 @@ def sign_up(dict):
 
 
 def list_bills(dict):
-    # authenticate_user = authenticate_user(dict).decode()
-    # if authenticate_user == 'true'
+    if authenticate_user(dict['username'], dict['auth_key']) is True:
+        user_id = querry_one(
+            """SELECT id FROM users WHERE users.username = %s""", dict['username'])
+        list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s""", user_id)
 
-    # else:
+        bills_dict = {'id': [], 'pagamento': [], 'cadastro': [], 'vencimento': []}
+        for bill in list_of_bills:
+            bills_dict['id'].append(str(bill[0]))
+            bills_dict['pagamento'].append(str(bill[1]))
+            bills_dict['cadastro'].append(str(bill[2]))
+            bills_dict['vencimento'].append(str(bill[3]))
+
+        return json.dumps(bills_dict).encode()
+    else:
+        return "ERRO 401".encode()
+
+def list_unchecked_payments(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         user_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
-        list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s""",
-                                    3)
-        print(list_of_bills)
-    # else:
+        list_of_bills = querry_all("""SELECT id, payment, registration_date, due_date FROM bills b WHERE b.fk_user_id = %s and validated = 'f'""", user_id)
+
+        bills_dict = {'id': [], 'pagamento': [], 'cadastro': [], 'vencimento': []}
+        for bill in list_of_bills:
+            bills_dict['id'].append(str(bill[0]))
+            bills_dict['pagamento'].append(str(bill[1]))
+            bills_dict['cadastro'].append(str(bill[2]))
+            bills_dict['vencimento'].append(str(bill[3]))
+
+        return json.dumps(bills_dict).encode() 
+    else:
+        return "ERRO 401".encode()
     
+
+
 def add_bills(dict)
-{
     print("Dados recebidos: ", dict)
     user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
     if user_id is None:
@@ -49,7 +71,6 @@ def add_bills(dict)
     fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
     status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
     return status.encode()
-}
 
 
 
