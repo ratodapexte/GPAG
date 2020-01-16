@@ -63,7 +63,7 @@ def list_unchecked_payments(dict):
     
 
 
-def add_bills(dict)
+def add_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         print("Dados recebidos: ", dict)
         user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
@@ -74,7 +74,7 @@ def add_bills(dict)
         return status.encode()
 
 
-def del_bills(dict)
+def del_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         print("Dados recebidos: ", dict)
         status = commit_querry("""DELETE FROM users WHERE bills.id = %s""", dict['conta_id'])
@@ -82,7 +82,7 @@ def del_bills(dict)
             return 'Conta nao encontrada'.encode()
         return status.encode()
 
-def auth_bills(dict)
+def auth_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         print("Dados recebidos: ", dict)
         status = commit_querry("""UPDATE bills SET validated = 't' WHERE payment_authentication_key = %s""", dict['conta_token'])

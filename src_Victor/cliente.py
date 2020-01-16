@@ -47,7 +47,7 @@ def authenticate_user(tcp, auth_user):
     else:
         return None
 
-def add_bills(tcp, auth_user)
+def add_bills(tcp, auth_user):
     sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
     add_bills = tcp.recv(1024).decode()
@@ -99,7 +99,7 @@ def list_unchecked_payments(tcp, auth_user):
             print("Data de vencimento: ", list_of_bills['id'][i])
         return auth_user
     
-def del_bills(tcp, auth_user)
+def del_bills(tcp, auth_user):
     sended_json = json.dumps({'command': 'del_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
     del_bills = tcp.recv(1024).decode()
@@ -113,7 +113,7 @@ def del_bills(tcp, auth_user)
         tcp.send(sended_json.encode())
         return tcp.recv(1024).decode()
 
-def auth_bills(tcp, auth_user)
+def auth_bills(tcp, auth_user):
     sended_json = json.dumps({'command': 'auth_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
     auth_bills = tcp.recv(1024).decode()
@@ -155,11 +155,18 @@ while msg != 'sair':
     else:
         print("Usuário logado")
         print("Nome: ", auth_user.username)
-        choice = int(input("Escolha as opções a seguir: \n1 - Listar contas;\n2 - Listar contas abertas;"))
+        choice = int(input("""Escolha as opções a seguir: \n1 - adicionar contas;\n2 - remover contas;
+                            \n3 - Listar contas;\n4 - Listar contas abertas;"""))
         if choice == 1:
-            auth_user = list_bills(tcp, auth_user)
+            auth_user = add_bills(tcp, auth_user)
         elif choice == 2:
+            auth_user = del_bills(tcp, auth_user)
+        elif choice == 3:
+            auth_user = list_bills(tcp, auth_user)
+        elif choice == 4:
             auth_user = list_unchecked_payments(tcp, auth_user)
+        elif choice == 5:
+            auth_user = auth_bills(tcp, auth_user) 
 
 
         
