@@ -64,13 +64,31 @@ def list_unchecked_payments(dict):
 
 
 def add_bills(dict)
-    print("Dados recebidos: ", dict)
-    user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
-    if user_id is None:
-        return 'Cliente nao cadastrado'.encode()
-    fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
-    status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
-    return status.encode()
+    if authenticate_user(dict['username'], dict['auth_key']) is True:
+        print("Dados recebidos: ", dict)
+        user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
+        if user_id is None:
+            return 'Cliente nao cadastrado'.encode()
+        fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
+        status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
+        return status.encode()
+
+
+def del_bills(dict)
+    if authenticate_user(dict['username'], dict['auth_key']) is True:
+        print("Dados recebidos: ", dict)
+        status = commit_querry("""DELETE FROM users WHERE bills.id = %s""", dict['conta_id'])
+        if status is None:
+            return 'Conta nao encontrada'.encode()
+        return status.encode()
+
+def auth_bills(dict)
+    if authenticate_user(dict['username'], dict['auth_key']) is True:
+        print("Dados recebidos: ", dict)
+        status = commit_querry("""UPDATE bills SET validated = 't' WHERE payment_authentication_key = %s""", dict['conta_token'])
+        if status is None:
+            return 'Token Invalido'.encode()
+        return status.encode()
 
 
 

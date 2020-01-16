@@ -48,18 +48,22 @@ def authenticate_user(tcp, auth_user):
         return None
 
 def add_bills(tcp, auth_user)
-    print("##### CADASTRO DE CONTA #####")
-    payment = input("Digite o valor da conta: ")
-    due_date = input("Digite a data de vencimento: ")
-    cpf = input("Digite o CPF do cliente: ")
-    
-    sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date,'employee_username': auth_user.username, 'cpf': cpf})
+    sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
-    return tcp.recv(1024).decode()
+    add_bills = tcp.recv(1024).decode()
+    if add_bills == 'ERRO 401':
+        return None
+    else:
+        print("##### CADASTRO DE CONTA #####")
+        payment = input("Digite o valor da conta: ")
+        due_date = input("Digite a data de vencimento: ")
+        cpf = input("Digite o CPF do cliente: ")
+        sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date, 'employee_username': auth_user.username, 'cpf': cpf})
+        tcp.send(sended_json.encode())
+        return tcp.recv(1024).decode()
 
 
 def list_bills(tcp, auth_user):
-
     sended_json = json.dumps({'command': 'list_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
 
@@ -78,7 +82,6 @@ def list_bills(tcp, auth_user):
         return auth_user
     
 def list_unchecked_payments(tcp, auth_user):
-
     sended_json = json.dumps({'command': 'list_unchecked_payments', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
 
@@ -95,6 +98,33 @@ def list_unchecked_payments(tcp, auth_user):
             print("Data de cadastro: ", list_of_bills['cadastro'][i])
             print("Data de vencimento: ", list_of_bills['id'][i])
         return auth_user
+    
+def del_bills(tcp, auth_user)
+    sended_json = json.dumps({'command': 'del_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    tcp.send(sended_json.encode())
+    del_bills = tcp.recv(1024).decode()
+    if del_bills == 'ERRO 401':
+        return None
+    else:
+        list_bills(tcp, auth_user)
+        print("##### EXCLUSAO DE CONTA #####")
+        conta_id = input("Digite o ID da conta: ")
+        sended_json = json.dumps({'command': 'del_bills', 'conta_id': conta_id})
+        tcp.send(sended_json.encode())
+        return tcp.recv(1024).decode()
+
+def auth_bills(tcp, auth_user)
+    sended_json = json.dumps({'command': 'auth_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    tcp.send(sended_json.encode())
+    auth_bills = tcp.recv(1024).decode()
+    if auth_bills == 'ERRO 401':
+        return None
+    else:
+        print("##### CONFIRMACAO DE PAGAMENTO #####")
+        conta_token = input("Digite o Token da conta: ")
+        sended_json = json.dumps({'command': 'del_bills', 'conta_token': conta_token})
+        tcp.send(sended_json.encode())
+        return tcp.recv(1024).decode()
 
 ######################################################################################################
 
