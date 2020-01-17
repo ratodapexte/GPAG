@@ -46,10 +46,24 @@ def sign_up(tcp, auth_user):
     email = input("Digite o seu email: ")
     phone = input("Digite o seu telefone: ")    
 
+    if auth_user.get_admin() is True:
+        adm_status = str(input("Usuário terá previlégios de adm?(S(sim))\n"))
+        if adm_status == 'S' or adm_status == 'sim':
+            adm_status = True
+        else:
+            adm_status = False
+        employee_status = str(input("Usuário terá previlégios de empregado?(S(sim))\n"))
+        if employee_status == 'S' or adm_status == 'sim':
+            employee_status = True
+        else:
+            employee_status = False
+    elif auth_user.get_employee() is True:
+        adm_status = False
+        employee_status = False
     sended_json = json.dumps({'command': 'sign_up', 'auth_name': auth_user.username, 'auth_key': auth_user.auth_key,
                         'adm': auth_user.get_admin(), 'employee': auth_user.get_employee(),
                         'username': username, 'password': password, 'name': name, 'cpf': cpf, 'email': email, 
-                        'phone': phone})
+                        'phone': phone, 'adm_status': adm_status, 'employee_status': employee_status})
     tcp.send(sended_json.encode())
     return tcp.recv(1024).decode()
 

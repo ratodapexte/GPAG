@@ -22,27 +22,21 @@ def login_user(dict):
 
 def sign_up(dict):
     print("Dados recebidos: ", dict)
-    if dict['adm'] is True:
-        adm_status = str(input("Usuário terá previlégios de adm?(S(sim))\n"))
-        if adm_status == 'S' or adm_status == 'sim':
-            adm_status = True
+    if authenticate_user(dict['username'], dict['auth_key']) is True:
+        if dict['adm'] is True:
+        status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, admin, employee)
+                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""", 
+                        dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'],
+                        dict['adm_status'], dict['employee_status'])
+        elif dict['employee_status'] is True:
+        status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone)
+                        VALUES (%s,%s,%s,%s,%s,%s)""", 
+                        dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'])    
         else:
-            adm_status = False
-        employee_status = str(input("Usuário terá previlégios de empregado?(S(sim))\n"))
-        if employee_status == 'S' or adm_status == 'sim':
-            employee_status = True
-        else:
-            employee_status = False
-    else:
-        adm_status = False
-        employee_status = False
-        
-
-    status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, admin, employee)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""", 
-                    dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'],
-                    adm_status, employee_status)
+            return "ERRO 403".encode()
     return status.encode()
+    else:
+        return 'ERRO 401!'.encode()
 
 
 def list_bills(dict):
