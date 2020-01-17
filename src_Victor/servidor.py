@@ -5,14 +5,14 @@ from reused_code import *
 
 def login_user(dict):
     print("Dados recebidos: ", dict)
-    querry = querry_one("""SELECT username FROM users WHERE username = %s AND password = %s""",
+    querry = querry_one("""SELECT username, adm, employee FROM users WHERE username = %s AND password = %s""",
             dict['username'], dict['password'])
     if querry is None:
         return json.dumps({'username': 'None', 'auth_key': 'None'}).encode()
     else:
         auth_key = secrets.token_hex()
         auth_key_init_datetime = datetime.now()
-        result = {'username': querry[0], 'auth_key': auth_key}
+        result = {'username': querry[0], 'adm': querry[1], 'employee': [2], 'auth_key': auth_key}
         commit_querry("""UPDATE users SET auth_key = %s, auth_key_init_datetime = %s 
                         WHERE username = %s AND password = %s""",
         auth_key, auth_key_init_datetime, result['username'], dict['password'])
@@ -22,9 +22,26 @@ def login_user(dict):
 
 def sign_up(dict):
     print("Dados recebidos: ", dict)
-    status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone)
-                    VALUES (%s,%s,%s,%s,%s,%s)""", 
-                    dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'])
+    if dict['adm'] is True:
+        adm_status = str(input("Usuário terá previlégios de adm?(S(sim))\n"))
+        if adm_status == 'S' or adm_status == 'sim':
+            adm_status = True
+        else:
+            adm_status = False
+        employee_status = str(input("Usuário terá previlégios de empregado?(S(sim))\n"))
+        if employee_status == 'S' or adm_status == 'sim':
+            employee_status = True
+        else:
+            employee_status = False
+    else:
+        adm_status = False
+        employee_status = False
+        
+
+    status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, admin, employee)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""", 
+                    dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'],
+                    adm_status, employee_status)
     return status.encode()
 
 

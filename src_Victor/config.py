@@ -19,3 +19,4 @@ def config(filename='src_Victor/database.ini', section='postgresql'):
     return db
 
 
+

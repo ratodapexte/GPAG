@@ -145,7 +145,11 @@ def authenticate_user(username, auth_key):
     time_dif = datetime.now() - querry[0]
     print(time_dif.seconds)
 
-    if time_dif.seconds < 10:
+    if time_dif.seconds < 60:
+        auth_key_init_datetime = datetime.now()
+        commit_querry("""UPDATE users SET auth_key_init_datetime = %s 
+                        WHERE username = %s AND auth_key = %s""",
+        auth_key_init_datetime, username, auth_key)
         return True
     else:
         commit_querry("""UPDATE users SET auth_key = null, auth_key_init_datetime = null 

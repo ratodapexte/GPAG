@@ -2,9 +2,21 @@ import socket
 import json
 
 class User():
-    def __init__(self, username, auth_key):
+    def __init__(self, username, auth_key, ):
         self.username = username
         self.auth_key = auth_key
+    
+    def set_admin(self, admin):
+        self.admin = admin
+    
+    def set_employee(self, employee):
+        self.employee = employee
+    
+    def get_admin(self):
+        return self.admin
+    
+    def get_employee(self):
+        return self.employee
 
 def login_user(tcp):
     print("##### LOGIN DE USUÁRIO #####")
@@ -19,10 +31,13 @@ def login_user(tcp):
     if recieved_json['username'] == 'None':
         return None
     else:
-        return User(recieved_json['username'], recieved_json['auth_key'])
+        auth_user = User(recieved_json['username'], recieved_json['auth_key'])
+        auth_user.set_admin(recieved_json['adm'])
+        auth_user.set_employee(recieved_json['employee'])
+        return auth_user
     # recv_json = tcp.recv(1024).decode()
 
-def sign_up(tcp):
+def sign_up(tcp, auth_user):
     print("##### CADASTRO DE USUÁRIO #####")
     username = input("Digite o nome de usuário: ")
     password = input("Digite a senha do usuário: ")
@@ -31,8 +46,10 @@ def sign_up(tcp):
     email = input("Digite o seu email: ")
     phone = input("Digite o seu telefone: ")    
 
-    sended_json = json.dumps({'command': 'sign_up', 'username': username, 'password': password,
-                                'name': name, 'cpf': cpf, 'email': email, 'phone': phone})
+    sended_json = json.dumps({'command': 'sign_up', 'auth_name': auth_user.username, 'auth_key': auth_user.auth_key,
+                        'adm': auth_user.get_admin(), 'employee': auth_user.get_employee(),
+                        'username': username, 'password': password, 'name': name, 'cpf': cpf, 'email': email, 
+                        'phone': phone})
     tcp.send(sended_json.encode())
     return tcp.recv(1024).decode()
 
@@ -143,31 +160,43 @@ auth_user = None
 
 while msg != 'sair':
     if auth_user is None:
-        choice = int(input("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.\n")) 
-        if choice == 1:
-            auth_user = login_user(tcp)
-            if auth_user is not None:
-                print(auth_user.username)
-            else:
-                print('Erro!')
-        if choice == 2:
-            print(sign_up(tcp))
+        auth_user = login_user(tcp)
     else:
         print("Usuário logado")
         print("Nome: ", auth_user.username)
-        choice = int(input("""Escolha as opções a seguir: \n1 - adicionar contas;\n2 - remover contas;
-                            \n3 - Listar contas;\n4 - Listar contas abertas;"""))
-        if choice == 1:
-            auth_user = add_bills(tcp, auth_user)
-        elif choice == 2:
-            auth_user = del_bills(tcp, auth_user)
-        elif choice == 3:
-            auth_user = list_bills(tcp, auth_user)
-        elif choice == 4:
-            auth_user = list_unchecked_payments(tcp, auth_user)
-        elif choice == 5:
-            auth_user = auth_bills(tcp, auth_user) 
+        if auth_user.get_admin() is True or auth_user.get_employee() is True:
+            choice = int(input("""Escolha as opções a seguir: \n1 - adicionar contas;\n2 - remover contas;\n3 - Listar contas;\n4 - Listar contas abertas;\n Escolha: """))
+            if choice == 1:
+                auth_user = add_bills(tcp, auth_user)
+            elif choice == 2:
+                auth_user = del_bills(tcp, auth_user)
+            elif choice == 3:
+                auth_user = list_bills(tcp, auth_user)
+            elif choice == 4:
+                auth_user = list_unchecked_payments(tcp, auth_user)
+            elif choice == 5:
+                auth_user = auth_bills(tcp, auth_user) 
+            elif choice == 6:
+                print(sign_up(tcp, auth_user))
+            else:
+                print("Opção errada!")
+        else:
+            choice = int(input("""Escolha as opções a seguir: \n1 - Listar contas;\n2 - Listar contas abertas;\n3 - Entrar código de pagamento;\nEscolha: """))
+            if choice == 1:
+                auth_user = list_bills(tcp, auth_user)
+            elif choice == 2:
+                auth_user = list_unchecked_payments(tcp, auth_user)
+            elif choice == 3:
+                auth_user = auth_bills(tcp, auth_user) 
+            else:
+                print("Opção errada!")
 
 
         
 tcp.close() #encerra o cliente
+
+
+
+
+
+
