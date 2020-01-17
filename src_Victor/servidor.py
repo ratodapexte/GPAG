@@ -24,17 +24,17 @@ def sign_up(dict):
     print("Dados recebidos: ", dict)
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         if dict['adm'] is True:
-        status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, admin, employee)
+            status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, admin, employee)
                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""", 
                         dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'],
                         dict['adm_status'], dict['employee_status'])
         elif dict['employee_status'] is True:
-        status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone)
+            status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone)
                         VALUES (%s,%s,%s,%s,%s,%s)""", 
                         dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'])    
         else:
             return "ERRO 403".encode()
-    return status.encode()
+        return status.encode()
     else:
         return 'ERRO 401!'.encode()
 
@@ -73,7 +73,6 @@ def list_unchecked_payments(dict):
         return "ERRO 401".encode()
     
 
-
 def add_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         print("Dados recebidos: ", dict)
@@ -83,6 +82,8 @@ def add_bills(dict):
         fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
         status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
         return status.encode()
+    else:
+        return "ERRO 401".encode()
 
 
 def del_bills(dict):
@@ -92,6 +93,8 @@ def del_bills(dict):
         if status is None:
             return 'Conta nao encontrada'.encode()
         return status.encode()
+    else:
+        return "ERRO 401".encode()
 
 def auth_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
@@ -100,6 +103,8 @@ def auth_bills(dict):
         if status is None:
             return 'Token Invalido'.encode()
         return status.encode()
+    else:
+        return "ERRO 401".encode()
 
 
 

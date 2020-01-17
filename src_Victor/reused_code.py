@@ -157,5 +157,3 @@ def authenticate_user(username, auth_key):
         return False
 
 
-
-

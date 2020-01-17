@@ -67,19 +67,9 @@ def sign_up(tcp, auth_user):
     tcp.send(sended_json.encode())
     return tcp.recv(1024).decode()
 
-def authenticate_user(tcp, auth_user):
-    sended_json = json.dumps({'command': 'authenticate_user', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
-    tcp.send(sended_json.encode())
-
-    result = tcp.recv(100).decode()
-
-    if result == 'true':
-        return auth_user
-    else:
-        return None
-
 def add_bills(tcp, auth_user):
-    sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key,
+                            'adm': auth_user.get_admin(), 'employee': auth_user.get_employee()})
     tcp.send(sended_json.encode())
     add_bills = tcp.recv(1024).decode()
     if add_bills == 'ERRO 401':
