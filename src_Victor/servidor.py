@@ -1,6 +1,7 @@
 import socket
 import secrets
 import json
+import threading
 from reused_code import *
 
 def login_user(dict):
@@ -122,6 +123,18 @@ def auth_bills(dict):
             return 'ERRO 404'.encode()
     else:
         return "ERRO 401".encode()
+    
+def main(con, cliente):
+    while True:
+        while True:
+            msg = con.recv(1024).decode('utf-8')
+            if not msg:
+                break
+            recv_json = json.loads(msg)
+            print("Comando: ", recv_json['command'])
+            con.send(globals()[recv_json['command']](recv_json))
+        print('Finalizando conexao do cliente ', cliente)
+        con.close()
 
 
 
@@ -137,14 +150,10 @@ tcp.listen(1)
 while True:
     con, cliente = tcp.accept()
     print ('Conectado por: ', cliente)
-    while True:
-        msg = con.recv(1024).decode('utf-8')
-        if not msg:break
-        recv_json = json.loads(msg)
-        print("Comando: ", recv_json['command'])
-        con.send(globals()[recv_json['command']](recv_json))
-    print ('Finalizando conexao do cliente ', cliente)
-    con.close()
+    t = threading.Thread(target=main, args=(tuple([con, cliente])))
+    t.start()
+
+tcp.close()
     
 ##############################################################################
 '''                              AUTENTICACAO
