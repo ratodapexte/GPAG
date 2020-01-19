@@ -128,7 +128,7 @@ def auth_bills(tcp, auth_user):
 
 ######################################################################################################
 
-host = 'localhost'  #ip do servidor
+host = '83.136.219.66'  #ip do servidor
 port = 30000        #porta que o servidor vai usar pra trocar informações
 
 tcp = socket.socket(socket.AF_INET,socket.SOCK_STREAM) #AF_INET é usar a internet, SOCK_STREAM é TCP
@@ -143,20 +143,24 @@ auth_user = None
 
 while msg != 'sair':
     if auth_user is None:
-        choice = int(input("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.\n")) 
-        if choice == 1:
-            auth_user = login_user(tcp)
-            if auth_user is not None:
-                print(auth_user.username)
-            else:
-                print('Erro!')
-        if choice == 2:
-            print(sign_up(tcp))
+        choice = int(input("Escolha as opções a seguir: \n1 - login; \n2 - cadastrar.\n"))
+        switch(choice):
+            case 1:
+                auth_user = login_user(tcp)
+                if auth_user is not None:
+                    print(auth_user.username)
+                else:
+                    print('Erro!')
+                    break
+            case 2:
+                print(sign_up(tcp))
+                break
+            
+            
     else:
         print("Usuário logado")
         print("Nome: ", auth_user.username)
-        choice = int(input("""Escolha as opções a seguir: \n1 - adicionar contas;\n2 - remover contas;
-                            \n3 - Listar contas;\n4 - Listar contas abertas;"""))
+        choice = int(input("""Escolha as opções a seguir:\n1 - adicionar contas;\n2 - remover contas;\n3 - Listar contas;\n4 - Listar contas abertas;\n"""))
         if choice == 1:
             auth_user = add_bills(tcp, auth_user)
         elif choice == 2:

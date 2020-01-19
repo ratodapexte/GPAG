@@ -145,13 +145,9 @@ def authenticate_user(username, auth_key):
     time_dif = datetime.now() - querry[0]
     print(time_dif.seconds)
 
-    if time_dif.seconds < 10:
+    if time_dif.seconds < 600:
         return True
     else:
         commit_querry("""UPDATE users SET auth_key = null, auth_key_init_datetime = null 
                         WHERE username = %s""", username)
         return False
-
-
-
-
