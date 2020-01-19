@@ -68,17 +68,14 @@ def sign_up(tcp, auth_user):
     return tcp.recv(1024).decode()
 
 def add_bills(tcp, auth_user):
-<<<<<<< HEAD
     print("##### CADASTRO DE CONTA #####")
     payment = input("Digite o valor da conta: ")
     due_date = input("Digite a data de vencimento: ")
     cpf = input("Digite o CPF do cliente: ")
     sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date, 'cpf': cpf,
                             'username': auth_user.username, 'auth_key': auth_user.auth_key })
-=======
     sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key,
                             'adm': auth_user.get_admin(), 'employee': auth_user.get_employee()})
->>>>>>> 21842749fc17bd3a761a8d1f0990f851e9b32e30
     tcp.send(sended_json.encode())
     result = tcp.recv(1024).decode()
 
@@ -156,24 +153,30 @@ def del_bills(tcp, auth_user):
     elif result == 'ERRO 404':
         print("Conta não encontrada!")
         return auth_user
-    else
+    else:
         print('Conta deletada!')
         return auth_user
 
 
 def auth_bills(tcp, auth_user):
-    sended_json = json.dumps({'command': 'auth_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    list_bills(tcp, auth_user)
+    print("##### CONFIRMACAO DE PAGAMENTO #####")
+    auth_token = input("Digite o Token da conta: ")
+    bill_id = input("Digite o id da conta a ser deletada: ")
+    sended_json = json.dumps({'command': 'auth_bills', 'auth_token': auth_token, 'id': bill_id})
     tcp.send(sended_json.encode())
-    auth_bills = tcp.recv(1024).decode()
-    if auth_bills == 'ERRO 401':
-        return None
-    else:
-        print("##### CONFIRMACAO DE PAGAMENTO #####")
-        conta_token = input("Digite o Token da conta: ")
-        sended_json = json.dumps({'command': 'del_bills', 'conta_token': conta_token})
-        tcp.send(sended_json.encode())
-        return tcp.recv(1024).decode()
+    result = tcp.recv(1024).decode()
 
+    if result == 'ERRO 401':
+        print("Por favor, faça login novamente!")
+        return None
+    elif result == 'ERRO 404':
+        print("Verificação do pagamento não foi realizada")
+        return auth_user
+    else:
+        print("Pagamento verificado")
+        return auth_user
+        
 ######################################################################################################
 
 host = 'localhost'  #ip do servidor
