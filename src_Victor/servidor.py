@@ -78,19 +78,22 @@ def list_unchecked_payments(dict):
 def add_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         level = querry_one("SELECT adm, employee FROM users WHERE username = %s", dict['username'])
-        if level[0] is True or level[1] is True:
+        print("adm: ", level[0], ", employee: ", level[1])
+        if level[0] == 'True' or level[1] == 'True':
             print("Dados recebidos: ", dict)
-                user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
-                if user_id is None:
-                    return 'Funcionário com o CPF indicado não existe!'.encode()
-                fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
-                status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
-                return "INSERTED".encode()
+            user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
+            if user_id is None:
+                return 'Funcionário com o CPF indicado não existe!'.encode()
+            fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
+            status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
+            return "INSERTED".encode()
         return "ERRO 403!".encode()
     return "ERRO 401!".encode()
 
 def list_all_bills():
     all_bills = querry_all("""SELECT id, payment, fk_user_id FROM bills""")
+    if all_bills is None:
+        return "ERRO 404".encode()
     bills_dict = {'id': [], 'pagamento': [], 'vencimento': []}
     for bill in all_bills:
             bills_dict['id'].append(str(bill[0]))
@@ -101,11 +104,11 @@ def list_all_bills():
 
 def del_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
-            level = querry_one("SELECT adm, employee FROM users WHERE username = %s" dict['username'])
+            level = querry_one("SELECT adm, employee FROM users WHERE username = %s", dict['username'])
             if level[0] is True or level[1] is True:
                 print("Dados recebidos: ", dict)
-                    commit_querry("""DELETE FROM bills WHERE id == %s""", dict['id'])
-                    return "DELETED".encode()
+                commit_querry("""DELETE FROM bills WHERE id == %s""", dict['id'])
+                return "DELETED".encode()
             return "ERRO 403!".encode()
     return "ERRO 401!".encode()
 

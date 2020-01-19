@@ -74,8 +74,6 @@ def add_bills(tcp, auth_user):
     cpf = input("Digite o CPF do cliente: ")
     sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date, 'cpf': cpf,
                             'username': auth_user.username, 'auth_key': auth_user.auth_key })
-    sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key,
-                            'adm': auth_user.get_admin(), 'employee': auth_user.get_employee()})
     tcp.send(sended_json.encode())
     result = tcp.recv(1024).decode()
 
@@ -134,6 +132,9 @@ def del_bills(tcp, auth_user):
     sended_json = json.dumps({'command': 'list_all_bills'})
     tcp.send(sended_json.encode())
     list_of_bills = json.loads(tcp.recv(1024).decode())
+    if list_of_bills == 'ERRO 404':
+        print("Nenhuma conta encontrada!\n\n")
+        return auth_user
 
     print("##### Lista das contas #####")
     for i in range(len(list_of_bills['id'])):
@@ -199,7 +200,8 @@ while msg != 'sair':
         print("Usuário logado")
         print("Nome: ", auth_user.username)
         if auth_user.get_admin() is True or auth_user.get_employee() is True:
-            choice = int(input("""Escolha as opções a seguir: \n1 - adicionar contas;\n2 - remover contas;\n3 - Listar contas;\n4 - Listar contas abertas;\n Escolha: """))
+            choice = int(input("""Escolha as opções a seguir: \n1 - adicionar contas;\n2 - remover contas;
+3 - Listar contas;\n4 - Listar contas abertas;\n5 - Autenticar pagamento\n6 - Cadastrar usuário\n Escolha: """))
             if choice == 1:
                 auth_user = add_bills(tcp, auth_user)
             elif choice == 2:

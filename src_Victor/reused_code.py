@@ -32,7 +32,7 @@ def commit_querry(sql, *args):
     finally:
         if conn is not None:
             conn.close()
-            print('Database connection closed.')
+            print('Database connection closed.\n\n\n')
     return status
 
 def querry_one(sql, *args):
@@ -66,7 +66,7 @@ def querry_one(sql, *args):
     finally:
         if conn is not None:
             conn.close()
-            print('Database connection closed.')
+            print('Database connection closed.\n\n\n')
     return row
 
 def querry_many(sql, size, *args):
@@ -98,7 +98,7 @@ def querry_many(sql, size, *args):
     finally:
         if conn is not None:
             conn.close()
-            print('Database connection closed.')
+            print('Database connection closed.\n\n\n')
     return rows
 
 def querry_all(sql, *args):
@@ -132,7 +132,7 @@ def querry_all(sql, *args):
     finally:
         if conn is not None:
             conn.close()
-            print('Database connection closed.')
+            print('Database connection closed.\n\n\n')
     return rows
 
         
@@ -145,7 +145,7 @@ def authenticate_user(username, auth_key):
     time_dif = datetime.now() - querry[0]
     print(time_dif.seconds)
 
-    if time_dif.seconds < 60:
+    if time_dif.seconds < 300:
         auth_key_init_datetime = datetime.now()
         commit_querry("""UPDATE users SET auth_key_init_datetime = %s 
                         WHERE username = %s AND auth_key = %s""",
