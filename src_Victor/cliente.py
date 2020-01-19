@@ -79,20 +79,23 @@ def authenticate_user(tcp, auth_user):
         return None
 
 def add_bills(tcp, auth_user):
-    sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    print("##### CADASTRO DE CONTA #####")
+    payment = input("Digite o valor da conta: ")
+    due_date = input("Digite a data de vencimento: ")
+    cpf = input("Digite o CPF do cliente: ")
+    sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date, 'cpf': cpf,
+                            'username': auth_user.username, 'auth_key': auth_user.auth_key })
     tcp.send(sended_json.encode())
-    add_bills = tcp.recv(1024).decode()
-    if add_bills == 'ERRO 401':
+    result = tcp.recv(1024).decode()
+
+    if result == 'INSERTED':
+        print("Conta inserida no cpf de numero ", cpf)
+        return auth_user
+    elif result == 'ERRO 401!':
         return None
     else:
-        print("##### CADASTRO DE CONTA #####")
-        payment = input("Digite o valor da conta: ")
-        due_date = input("Digite a data de vencimento: ")
-        cpf = input("Digite o CPF do cliente: ")
-        sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date, 'employee_username': auth_user.username, 'cpf': cpf})
-        tcp.send(sended_json.encode())
-        return tcp.recv(1024).decode()
-
+        print("Usuário proibido de realizar a ação!")
+        return auth_user
 
 def list_bills(tcp, auth_user):
     sended_json = json.dumps({'command': 'list_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
@@ -102,6 +105,9 @@ def list_bills(tcp, auth_user):
 
     if list_of_bills == 'ERRO 401':
         return None
+    elif list_of_bills ==  'ERRO 404':
+        print("Nenhuma conta encontrada!")
+        return auth_user
     else:
         list_of_bills = json.loads(list_of_bills)
 
@@ -120,6 +126,9 @@ def list_unchecked_payments(tcp, auth_user):
 
     if list_of_bills == 'ERRO 401':
         return None
+    elif list_of_bills == 'ERRO 404':
+       print("Nenhuma conta foi encontrada!")
+       return auth_user
     else:
         list_of_bills = json.loads(list_of_bills)
 
@@ -127,22 +136,36 @@ def list_unchecked_payments(tcp, auth_user):
             print("Id: ", list_of_bills['id'][i])
             print("Pagamento: ", list_of_bills['pagamento'][i])
             print("Data de cadastro: ", list_of_bills['cadastro'][i])
-            print("Data de vencimento: ", list_of_bills['id'][i])
+            print("Data de vencimento: ", list_of_bills['vencimento'][i])
         return auth_user
     
 def del_bills(tcp, auth_user):
-    sended_json = json.dumps({'command': 'del_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
+    sended_json = json.dumps({'command': 'list_all_bills'})
     tcp.send(sended_json.encode())
-    del_bills = tcp.recv(1024).decode()
-    if del_bills == 'ERRO 401':
+    list_of_bills = json.loads(tcp.recv(1024).decode())
+
+    print("##### Lista das contas #####")
+    for i in range(len(list_of_bills['id'])):
+        print("Id: ", list_of_bills['id'][i])
+        print("Pagamento: ", list_of_bills['pagamento'][i])
+        print("Data de vencimento: ", list_of_bills['vencimento'][i])
+
+    print("\n\nDigite o id da conta: ")
+    bill_id = int(input())
+
+    tcp.send(json.dumps({'command': 'del_bills', 'username': auth_user.username, 
+                            'auth_key': auth_user.auth_key, 'id':  bill_id}))
+    result = tcp.recv(1024).decode()
+
+    if result == 'ERRO 401':
         return None
-    else:
-        list_bills(tcp, auth_user)
-        print("##### EXCLUSAO DE CONTA #####")
-        conta_id = input("Digite o ID da conta: ")
-        sended_json = json.dumps({'command': 'del_bills', 'conta_id': conta_id})
-        tcp.send(sended_json.encode())
-        return tcp.recv(1024).decode()
+    elif result == 'ERRO 404':
+        print("Conta não encontrada!")
+        return auth_user
+    else
+        print('Conta deletada!')
+        return auth_user
+
 
 def auth_bills(tcp, auth_user):
     sended_json = json.dumps({'command': 'auth_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
