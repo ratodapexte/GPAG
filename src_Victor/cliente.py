@@ -67,24 +67,18 @@ def sign_up(tcp, auth_user):
     tcp.send(sended_json.encode())
     return tcp.recv(1024).decode()
 
-def authenticate_user(tcp, auth_user):
-    sended_json = json.dumps({'command': 'authenticate_user', 'username': auth_user.username, 'auth_key': auth_user.auth_key})
-    tcp.send(sended_json.encode())
-
-    result = tcp.recv(100).decode()
-
-    if result == 'true':
-        return auth_user
-    else:
-        return None
-
 def add_bills(tcp, auth_user):
+<<<<<<< HEAD
     print("##### CADASTRO DE CONTA #####")
     payment = input("Digite o valor da conta: ")
     due_date = input("Digite a data de vencimento: ")
     cpf = input("Digite o CPF do cliente: ")
     sended_json = json.dumps({'command': 'add_bills', 'payment': payment, 'due_date': due_date, 'cpf': cpf,
                             'username': auth_user.username, 'auth_key': auth_user.auth_key })
+=======
+    sended_json = json.dumps({'command': 'add_bills', 'username': auth_user.username, 'auth_key': auth_user.auth_key,
+                            'adm': auth_user.get_admin(), 'employee': auth_user.get_employee()})
+>>>>>>> 21842749fc17bd3a761a8d1f0990f851e9b32e30
     tcp.send(sended_json.encode())
     result = tcp.recv(1024).decode()
 
