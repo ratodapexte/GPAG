@@ -89,7 +89,7 @@ def add_bills(dict):
                 return 'ERRO 404'.encode()
             fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
             status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, fk_user_id) 
-            VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, user_id)
+            VALUES (%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, user_id)
             return "INSERTED".encode()
         return "ERRO 403!".encode()
     return "ERRO 401!".encode()

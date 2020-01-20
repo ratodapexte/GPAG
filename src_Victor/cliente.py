@@ -48,7 +48,7 @@ def sign_up(tcp, auth_user):
 
     if auth_user.get_admin() is True:
         adm_status = str(input("Usuário terá previlégios de adm?(S(sim))\n"))
-        if adm_status == 'S' or adm_status == 'sim':
+        if adm_status.upper() == 'S' or adm_status.upper() == 'SIM':
             adm_status = True
         else:
             adm_status = False
@@ -193,9 +193,7 @@ server = (host,port) #tupla
 tcp.connect(server) #conecta o servidor
 
 print("Conectado ao servidor ", host)
-print("Para sair digite 'sair'")
 msg = 'none'
-print(msg)
 auth_user = None
 
 while msg != 'sair':
@@ -224,7 +222,7 @@ while msg != 'sair':
             else:
                 print("Opção errada!")
         else:
-            choice = int(input("""Escolha as opções a seguir: \n1 - Listar contas;\n2 - Listar contas abertas;\n3 - Entrar código de pagamento;\n4 - DeslogarEscolha: """))
+            choice = int(input("""Escolha as opções a seguir: \n1 - Listar contas;\n2 - Listar contas abertas;\n3 - Entrar código de pagamento;\n4 - Deslogar\nEscolha: """))
             if choice == 1:
                 auth_user = list_bills(tcp, auth_user)
             elif choice == 2:

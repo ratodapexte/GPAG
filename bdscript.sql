@@ -17,7 +17,8 @@ CREATE TABLE users (
   phone varchar(255),
   adm boolean DEFAULT 'f',
   employee boolean DEFAULT 'f',
-  auth_key text UNIQUE
+  auth_key text UNIQUE,
+  auth_key_init_datetime TIMESTAMP
 );
 CREATE TABLE bills (
   id bigserial PRIMARY KEY,
