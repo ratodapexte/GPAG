@@ -23,16 +23,17 @@ def login_user(dict):
 
 def sign_up(dict):
     print("Dados recebidos: ", dict)
-    if authenticate_user(dict['username'], dict['auth_key']) is True:
-        if dict['adm'] is True:
-            status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, admin, employee)
+    if authenticate_user(dict['auth_name'], dict['auth_key']) is True:
+        level = querry_one("SELECT adm, employee FROM users WHERE username = %s", dict['auth_name'])
+        if level[0] is True:
+            status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, adm, employee)
                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""", 
                         dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'],
                         dict['adm_status'], dict['employee_status'])
-        elif dict['employee_status'] is True:
-            status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone)
+        elif level[1] is True:
+            status = commit_querry("""INSERT INTO users (username, password, name, cpf, email, phone, employee)
                         VALUES (%s,%s,%s,%s,%s,%s)""", 
-                        dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'])    
+                        dict['username'], dict['password'], dict['name'], dict['cpf'], dict['email'], dict['phone'], dict['employee_status'])    
         else:
             return "ERRO 403".encode()
         return status.encode()
@@ -78,20 +79,22 @@ def list_unchecked_payments(dict):
 
 def add_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
-        level = querry_one("SELECT adm, employee FROM users WHERE username = %s", dict['username'])
-        print("adm: ", level[0], ", employee: ", level[1])
-        if level[0] == 'True' or level[1] == 'True':
+        adm, emp = querry_one("SELECT adm, employee FROM users WHERE username = %s", dict['username'])
+        print("adm: ",adm, ", employee: ",emp)
+        if adm is True or emp is True:
+            print("##### ADICIONANDO CONTA #####")
             print("Dados recebidos: ", dict)
             user_id = querry_one("""SELECT id FROM users WHERE users.cpf = %s""", dict['cpf'])
             if user_id is None:
-                return 'Funcionário com o CPF indicado não existe!'.encode()
-            fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['employee_username'])
-            status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, payment_authentication_key, fk_user_id) VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, secrets.token_hex(), user_id)
+                return 'ERRO 404'.encode()
+            fk_employee_id = querry_one("""SELECT id FROM users WHERE users.username = %s""", dict['username'])
+            status = commit_querry("""INSERT INTO bills (payment, due_date, fk_employee_id, fk_user_id) 
+            VALUES (%s,%s,%s,%s,%s)""", dict['payment'], dict['due_date'], fk_employee_id, user_id)
             return "INSERTED".encode()
         return "ERRO 403!".encode()
     return "ERRO 401!".encode()
 
-def list_all_bills():
+def list_all_bills(dict):
     all_bills = querry_all("""SELECT id, payment, fk_user_id FROM bills""")
     if all_bills is None:
         return "ERRO 404".encode()
@@ -108,7 +111,7 @@ def del_bills(dict):
             level = querry_one("SELECT adm, employee FROM users WHERE username = %s", dict['username'])
             if level[0] is True or level[1] is True:
                 print("Dados recebidos: ", dict)
-                commit_querry("""DELETE FROM bills WHERE id == %s""", dict['id'])
+                commit_querry("""DELETE FROM bills WHERE id = %s""", dict['id'])
                 return "DELETED".encode()
             return "ERRO 403!".encode()
     return "ERRO 401!".encode()
@@ -116,7 +119,8 @@ def del_bills(dict):
 def auth_bills(dict):
     if authenticate_user(dict['username'], dict['auth_key']) is True:
         print("Dados recebidos: ", dict)
-        status = commit_querry("""UPDATE bills SET validated = 't' WHERE payment_authentication_key = %s""", dict['bill_token'])
+        status = commit_querry("""UPDATE bills SET validated = 't', payment_authentication_key = %s WHERE id = %s""", dict['auth_token'],
+                                dict['id'])
         if status == "UPDATE 1":
             return "Conta verificada".encode()
         else:

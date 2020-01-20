@@ -81,7 +81,11 @@ def add_bills(tcp, auth_user):
         print("Conta inserida no cpf de numero ", cpf)
         return auth_user
     elif result == 'ERRO 401!':
+        print('Faça novamente o login')
         return None
+    elif result == 'ERRO 404':
+        print('Funcionário com o CPF indicado não existe!')
+        return auth_user
     else:
         print("Usuário proibido de realizar a ação!")
         return auth_user
@@ -146,7 +150,7 @@ def del_bills(tcp, auth_user):
     bill_id = int(input())
 
     tcp.send(json.dumps({'command': 'del_bills', 'username': auth_user.username, 
-                            'auth_key': auth_user.auth_key, 'id':  bill_id}))
+                            'auth_key': auth_user.auth_key, 'id':  bill_id}).encode())
     result = tcp.recv(1024).decode()
 
     if result == 'ERRO 401':
@@ -163,8 +167,9 @@ def auth_bills(tcp, auth_user):
     list_bills(tcp, auth_user)
     print("##### CONFIRMACAO DE PAGAMENTO #####")
     auth_token = input("Digite o Token da conta: ")
-    bill_id = input("Digite o id da conta a ser deletada: ")
-    sended_json = json.dumps({'command': 'auth_bills', 'auth_token': auth_token, 'id': bill_id})
+    bill_id = input("Digite o id da conta a ser autenticada: ")
+    sended_json = json.dumps({'command': 'auth_bills', 'auth_token': auth_token, 'id': bill_id, 'username': auth_user.username,
+                                'auth_key': auth_user.auth_key})
     tcp.send(sended_json.encode())
     result = tcp.recv(1024).decode()
 
@@ -201,7 +206,7 @@ while msg != 'sair':
         print("Nome: ", auth_user.username)
         if auth_user.get_admin() is True or auth_user.get_employee() is True:
             choice = int(input("""Escolha as opções a seguir: \n1 - adicionar contas;\n2 - remover contas;
-3 - Listar contas;\n4 - Listar contas abertas;\n5 - Autenticar pagamento\n6 - Cadastrar usuário\n Escolha: """))
+3 - Listar contas;\n4 - Listar contas abertas;\n5 - Autenticar pagamento\n6 - Cadastrar usuário\n7 - deslogar\n Escolha: """))
             if choice == 1:
                 auth_user = add_bills(tcp, auth_user)
             elif choice == 2:
@@ -214,16 +219,20 @@ while msg != 'sair':
                 auth_user = auth_bills(tcp, auth_user) 
             elif choice == 6:
                 print(sign_up(tcp, auth_user))
+            elif choice == 7:
+                auth_user = None
             else:
                 print("Opção errada!")
         else:
-            choice = int(input("""Escolha as opções a seguir: \n1 - Listar contas;\n2 - Listar contas abertas;\n3 - Entrar código de pagamento;\nEscolha: """))
+            choice = int(input("""Escolha as opções a seguir: \n1 - Listar contas;\n2 - Listar contas abertas;\n3 - Entrar código de pagamento;\n4 - DeslogarEscolha: """))
             if choice == 1:
                 auth_user = list_bills(tcp, auth_user)
             elif choice == 2:
                 auth_user = list_unchecked_payments(tcp, auth_user)
             elif choice == 3:
                 auth_user = auth_bills(tcp, auth_user) 
+            elif choice == 4:
+                auth_user = None
             else:
                 print("Opção errada!")
 
