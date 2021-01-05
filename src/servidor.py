@@ -142,7 +142,7 @@ def main(con, cliente):
 
 
 
-HOST = ''
+HOST = 'localhost'
 PORT = 30000
 
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

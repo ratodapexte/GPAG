@@ -30,3 +30,9 @@ CREATE TABLE bills (
   fk_user_id int REFERENCES users(id),
   validated boolean DEFAULT 'f'
 );
+INSERT INTO public.users(
+	name, username, password, cpf, email, phone, adm, employee)
+	VALUES ('admin', 'admin', 'admin', 0000000000, 'admin@admin', 000000000, true, true);
+INSERT INTO public.users(
+	name, username, password, cpf, email, phone, adm, employee)
+	VALUES ('cliente', 'cliente', 'cliente', 11111111111, 'admin@admin', 111111111, true, true);
